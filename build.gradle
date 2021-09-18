@@ -1,0 +1,19 @@
+buildscript {
+  repositories {
+    mavenCentral()
+    maven {
+      url "https://nexus.goorange.sixt.com/nexus/content/groups/public/"
+    }
+  }
+  dependencies {
+    classpath 'com.sixt.gradle:go:0.1.6'
+  }
+}
+
+apply plugin: 'com.sixt.gradle.go'
+
+go {
+  linter = ["golint"]
+  dockerRegistry = "docker-registry.goorange.sixt.com/goorange"
+  dockerRun = ["apk add --no-cache ca-certificates"]
+}
