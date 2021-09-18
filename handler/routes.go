@@ -10,7 +10,6 @@ func HandleRequests(keyValueHandler KeyValueHandler) {
 	http.HandleFunc("/", func (w http.ResponseWriter, r *http.Request) {
 
 		ctx := context.Background()
-
 		switch r.Method {
 		case "GET":
 			switch r.URL.Path {

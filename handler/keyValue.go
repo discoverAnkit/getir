@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/discoverAnkit/getir/contract"
 	"github.com/discoverAnkit/getir/repository"
+	"log"
 	"net/http"
 )
 
@@ -14,56 +15,82 @@ type KeyValueHandler struct{
 }
 
 func (h *KeyValueHandler) SetKeyValue(ctx context.Context,w http.ResponseWriter, r *http.Request) {
-	//TODO below
-	//add logs
-	//input validation ? - not really required
+
+	log.Println("Handling SetKeyValue")
+
 	//parse req body
-	//call repo
-	//return response
-	//http error codes
-	//Unit Tests
-
 	setKeyValueRequest := contract.SetKeyValueRequest{}
-	json.NewDecoder(r.Body).Decode(&setKeyValueRequest)
+	err := json.NewDecoder(r.Body).Decode(&setKeyValueRequest)
+	if err!=nil {
+		http.Error(w,"Bad Request",http.StatusBadRequest)
+		return
+	}
+	log.Printf("Key : %s, Value %s",setKeyValueRequest.Key,setKeyValueRequest.Value)
 
-	//handler error
-	h.InMemoryRepository.SetKeyValue(ctx,setKeyValueRequest.Key,setKeyValueRequest.Value)
+	//call repo
+	err = h.InMemoryRepository.SetKeyValue(ctx,setKeyValueRequest.Key,setKeyValueRequest.Value)
+	if err!= nil {
+		log.Println("Repository Error calling SetKeyValue")
+		http.Error(w,"Something went wrong!",http.StatusInternalServerError)
+		return
+	}
 
 	setKeyValueResponse := contract.SetKeyValueResponse{
 		Key: setKeyValueRequest.Key,
 		Value: setKeyValueRequest.Value,
 	}
-	//handle err
-	resp, _ := json.Marshal(setKeyValueResponse)
 
-	//how to say content type
+	resp, err := json.Marshal(setKeyValueResponse)
+	if err!= nil {
+		log.Println("Error in JSON Marshaling")
+		http.Error(w,"Something went wrong!",http.StatusInternalServerError)
+		return
+	}
+
+	setContentTypeAsJson(w)
 	w.Write(resp)
 }
 
 func (h *KeyValueHandler) GetValue(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	//add logs
-	//input validation ? - not really required
-	//parse req body
-	//call repo
-	//return response
+
+	log.Println("Handling GetValue")
+
 	values :=  r.URL.Query()
 	keyValues, found := values["key"]
 	if !found {
-		//throw err
+		log.Println("Request could not be completed as key was missing in query params")
+		http.Error(w,"Missing Query Param",http.StatusBadRequest)
+		return
 	}
 	if len(keyValues) > 1 {
-		//too many keys //Bad Request
+		log.Println("Request could not be completed as there was no single key")
+		http.Error(w,"Too many parameters",http.StatusBadRequest)
+		return
 	}
 
 	value := h.InMemoryRepository.GetValue(ctx,keyValues[0])
+	if len(value) == 0 {
+		log.Println("Key not found")
+		http.Error(w,"Not Found",http.StatusNotFound)
+		return
+	}
 
 	getValueResponse := contract.GetValueResponse{
 		Key: keyValues[0],
 		Value: value,
 	}
-	//handle err
-	resp, _ := json.Marshal(getValueResponse)
 
-	//how to say content type
+	resp, err := json.Marshal(getValueResponse)
+	if err!= nil {
+		log.Println("Error in JSON Marshaling")
+		http.Error(w,"Something went wrong!",http.StatusInternalServerError)
+		return
+	}
+
+	setContentTypeAsJson(w)
 	w.Write(resp)
+}
+
+func setContentTypeAsJson(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json")
 }
