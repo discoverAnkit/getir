@@ -13,15 +13,16 @@ type KeyValueHandler struct{
 	InMemoryRepository repository.InMemoryClient
 }
 
-func (h *KeyValueHandler) SetKeyValue(w http.ResponseWriter, r *http.Request) {
+func (h *KeyValueHandler) SetKeyValue(ctx context.Context,w http.ResponseWriter, r *http.Request) {
+	//TODO below
 	//add logs
 	//input validation ? - not really required
 	//parse req body
 	//call repo
 	//return response
 	//http error codes
+	//Unit Tests
 
-	ctx := context.Background()
 	setKeyValueRequest := contract.SetKeyValueRequest{}
 	json.NewDecoder(r.Body).Decode(&setKeyValueRequest)
 
@@ -39,7 +40,7 @@ func (h *KeyValueHandler) SetKeyValue(w http.ResponseWriter, r *http.Request) {
 	w.Write(resp)
 }
 
-func (h *KeyValueHandler) GetValue(w http.ResponseWriter, r *http.Request) {
+func (h *KeyValueHandler) GetValue(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	//add logs
 	//input validation ? - not really required
 	//parse req body
@@ -54,7 +55,6 @@ func (h *KeyValueHandler) GetValue(w http.ResponseWriter, r *http.Request) {
 		//too many keys //Bad Request
 	}
 
-	ctx := context.Background()
 	value := h.InMemoryRepository.GetValue(ctx,keyValues[0])
 
 	getValueResponse := contract.GetValueResponse{

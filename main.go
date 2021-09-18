@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/discoverAnkit/getir/handler"
 	"github.com/discoverAnkit/getir/repository"
 	"github.com/patrickmn/go-cache"
@@ -16,6 +17,8 @@ func main() {
 
 	handler.HandleRequests(keyValueHandler)
 
-	log.Println("Starting Server...")
-	log.Fatal(http.ListenAndServe(":10000", nil))
+	fmt.Printf("Starting server for testing HTTP POST...\n")
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		log.Fatal(err)
+	}
 }

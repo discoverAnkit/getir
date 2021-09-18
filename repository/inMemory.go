@@ -34,6 +34,6 @@ func (c *inMemoryClient) GetValue (ctx context.Context, key string) string {
 func (c *inMemoryClient) SetKeyValue(ctx context.Context, key,value string) error {
 
 	cached := c.cacheClient
-	cached.Delete(key) //coz this library wont override 
+	cached.Delete(key) //coz this library wont override
 	return cached.Add(key,value,cache.NoExpiration)
 }
