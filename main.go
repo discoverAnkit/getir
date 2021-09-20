@@ -10,7 +10,7 @@ import (
 )
 
 // Connection URI
-// It can come from a config service as well if there is one
+// It can come from a config service(a separate config package can be created then to deal with that service) as well if there is one
 const (
 	mongoUri = "mongodb+srv://challengeUser:WUMglwNBaydH8Yvu@challenge-xzwqd.mongodb.net/getir-case-study?authSource=admin&replicaSet=challenge-shard-0&readPreference=primary&appname=MongoDB%20Compass&retryWrites=true&ssl=true"
 	mongoDSN = "getir-case-study"
@@ -27,12 +27,13 @@ func main() {
 		}
 	}()
 
-	mongoRequestHandler := handler.MongoRequestHandler{MongoRepo: mongoStore}
-	keyValueHandler := handler.KeyValueHandler{
+	mongoRequestHandler := &handler.MongoRequestHandler{MongoRepo: mongoStore}
+	keyValueHandler := &handler.KeyValueHandler{
 		InMemoryRepository: repository.NewInMemoryClient(cache.New(cache.NoExpiration, cache.NoExpiration)),
 	}
 
-	handler.HandleRequests(keyValueHandler,mongoRequestHandler)
+	router :=  handler.NewRouter(keyValueHandler,mongoRequestHandler)
+	http.HandleFunc("/", router.Handle)
 
 	log.Println("Starting server for testing HTTP POST...")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
