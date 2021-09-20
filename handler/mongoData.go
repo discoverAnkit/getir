@@ -34,8 +34,9 @@ func (h *MongoRequestHandler) GetKeyValueRecords(ctx context.Context,w http.Resp
 
 	log.Println("Handling GetKeyValueRecords")
 
-	//As per specifications, this api always returns 200
-	//Error codes are embedded in the response object
+	setContentTypeAsJson(w)
+
+	//As per specifications, this api always returns 200 as error codes are embedded in the response object
 	response := &contract.GetKeyValueRecordsResponse{}
 	responseRecords := make([]contract.Record,0)
 
@@ -45,6 +46,9 @@ func (h *MongoRequestHandler) GetKeyValueRecords(ctx context.Context,w http.Resp
 	if err!=nil {
 		log.Println("invalid json, could not be decoded")
 		response = prepareResponse(badRequestErrorCode,badRequestMsg,responseRecords)
+		resp, _:= json.Marshal(response)
+		w.Write(resp)
+		return
 	}
 
 	//convert input dates into time
@@ -52,11 +56,17 @@ func (h *MongoRequestHandler) GetKeyValueRecords(ctx context.Context,w http.Resp
 	if err!= nil {
 		log.Println("start date could not be parsed")
 		response = prepareResponse(badRequestErrorCode,badRequestMsg,responseRecords)
+		resp, _:= json.Marshal(response)
+		w.Write(resp)
+		return
 	}
 	endTime, err := time.Parse(timeFormatLayout, req.EndDate)
 	if err!= nil {
 		log.Println("end date could not be parsed")
 		response = prepareResponse(badRequestErrorCode,badRequestMsg,responseRecords)
+		resp, _:= json.Marshal(response)
+		w.Write(resp)
+		return
 	}
 
 	//call repo
@@ -64,18 +74,14 @@ func (h *MongoRequestHandler) GetKeyValueRecords(ctx context.Context,w http.Resp
 	if err!= nil {
 		log.Println("Repository Error calling GetRecordsByCreationTime")
 		response = prepareResponse(internalServerErrorCode,internalServerErrorMsg,responseRecords)
+		resp, _:= json.Marshal(response)
+		w.Write(resp)
+		return
 	}
 
 	responseRecords = filterRecordsByTotalCount(records,req.MinCount,req.MaxCount)
 	response = prepareResponse(successCode,successMsg,responseRecords)
-
-	resp, err := json.Marshal(response)
-	if err!= nil {
-		log.Println("Error in JSON Marshaling")
-		response = prepareResponse(badRequestErrorCode,badRequestMsg,[]contract.Record{})
-	}
-
-	setContentTypeAsJson(w)
+	resp, _:= json.Marshal(response)
 	w.Write(resp)
 }
 
