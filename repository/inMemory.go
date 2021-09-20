@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"github.com/patrickmn/go-cache"
+	"log"
 )
 
 type InMemoryClient interface {
@@ -27,7 +28,7 @@ func (c *inMemoryClient) GetValue (ctx context.Context, key string) string {
 	if found {
 		return value.(string)
 	}
-
+	log.Printf("Key : %s not found \n",key)
 	return ""
 }
 

@@ -1,10 +1,10 @@
 package contract
 
-type GetCountsRequest struct {
+type GetKeyValueRecordsRequest struct {
 	StartDate  string   `json:"startDate"`
 	EndDate    string   `json:"endDate"`
-	MinCount   string   `json:"minCount"`
-	MaxCount   string   `json:"maxCount"`
+	MinCount   int      `json:"minCount"`
+	MaxCount   int      `json:"maxCount"`
 }
 
 type KeyValuePair struct {

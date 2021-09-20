@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func HandleRequests(keyValueHandler KeyValueHandler) {
+func HandleRequests(keyValueHandler KeyValueHandler, mongoRequestHandler MongoRequestHandler) {
 
 	http.HandleFunc("/", func (w http.ResponseWriter, r *http.Request) {
 
@@ -22,6 +22,8 @@ func HandleRequests(keyValueHandler KeyValueHandler) {
 			switch r.URL.Path {
 			case "/setKeyValue":
 				keyValueHandler.SetKeyValue(ctx,w,r)
+			case "/getKeyValueRecords":
+				mongoRequestHandler.GetKeyValueRecords(ctx,w,r)
 			default:
 				http.NotFound(w,r)
 			}

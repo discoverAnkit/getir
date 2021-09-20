@@ -27,11 +27,12 @@ func main() {
 		}
 	}()
 
+	mongoRequestHandler := handler.MongoRequestHandler{MongoRepo: mongoStore}
 	keyValueHandler := handler.KeyValueHandler{
 		InMemoryRepository: repository.NewInMemoryClient(cache.New(cache.NoExpiration, cache.NoExpiration)),
 	}
 
-	handler.HandleRequests(keyValueHandler)
+	handler.HandleRequests(keyValueHandler,mongoRequestHandler)
 
 	log.Println("Starting server for testing HTTP POST...")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
