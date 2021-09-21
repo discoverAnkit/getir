@@ -33,9 +33,9 @@ go run main.go
 
 * [Go modules](https://github.com/golang/go/wiki/Modules) are used to manage dependencies. Clone the project outside of the `$GOPATH` or set `export GO111MODULE=on` in your shell to enable the modules.
 
-#API Information
+# API Information
 
-##GetKeyValueRecords (Mongo)
+## GetKeyValueRecords (Mongo)
 ```
 POST https://nameless-garden-48450.herokuapp.com/getKeyValueRecords
 
@@ -87,7 +87,7 @@ Sample Response
 }
 ```
 
-##SetKeyValue (InMemory)
+## SetKeyValue (InMemory)
 ```
 POST https://nameless-garden-48450.herokuapp.com/setKeyValue
 
@@ -105,7 +105,7 @@ Sample Response
 }
 ```
 
-##GetValue (InMemory)
+## GetValue (InMemory)
 ```
 GET https://nameless-garden-48450.herokuapp.com/getValue?key=Ankit
 ```
