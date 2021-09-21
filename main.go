@@ -36,8 +36,6 @@ func main() {
 	router :=  handler.NewRouter(keyValueHandler,mongoRequestHandler)
 	http.HandleFunc("/", router.Handle)
 
-	log.Println("Starting server for testing HTTP POST...")
-
 	port := os.Getenv("PORT")
 	if len(port) == 0 {
 		port = "1000"
@@ -46,4 +44,6 @@ func main() {
 	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Fatal(err)
 	}
+
+	log.Println("Starting http server on port : ",port)
 }
