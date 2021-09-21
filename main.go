@@ -7,6 +7,7 @@ import (
 	"github.com/patrickmn/go-cache"
 	"log"
 	"net/http"
+	"os"
 )
 
 // Connection URI
@@ -36,7 +37,13 @@ func main() {
 	http.HandleFunc("/", router.Handle)
 
 	log.Println("Starting server for testing HTTP POST...")
-	if err := http.ListenAndServe(":0", nil); err != nil {
+
+	port := os.Getenv("PORT")
+	if len(port) == 0 {
+		port = "1000"
+	}
+
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Fatal(err)
 	}
 }
