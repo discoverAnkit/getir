@@ -36,7 +36,7 @@ func main() {
 	http.HandleFunc("/", router.Handle)
 
 	log.Println("Starting server for testing HTTP POST...")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	if err := http.ListenAndServe(":0", nil); err != nil {
 		log.Fatal(err)
 	}
 }
